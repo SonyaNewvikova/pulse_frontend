@@ -14,7 +14,7 @@ const getBaseUrl = () => {
     window.location.hostname === '127.0.0.1';
   
   // Для локальной разработки используем localhost, для production - ngrok URL
-  return isLocalhost ? 'http://localhost:8000' : 'https://c590-89-46-235-158.ngrok-free.app';
+  return isLocalhost ? 'http://localhost:8000' : 'https://cf9c-89-46-235-158.ngrok-free.app';
 };
 
 const API_URL = getBaseUrl();
