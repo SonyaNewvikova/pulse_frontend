@@ -12,8 +12,10 @@
   --message-assistant-bg: #ffffff;
   --error-color: #ef4444;
   --light-gray: #e5e7eb;
+  --chat-bg: #f5f7fa;
   --app-width: 100%;
   --content-width: 100%;
+  --message-max-width: 75%;
 }
 
 .dark-theme {
@@ -26,7 +28,8 @@
   --input-background: #1E293B;
   --input-border: #4A5568;
   --message-user-bg: #1E293B;
-  --message-assistant-bg: #111827;
+  --message-assistant-bg: #1a202c;
+  --chat-bg: #0f172a;
 }
 
 body {
@@ -200,7 +203,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background-color: var(--background-color);
+  background-color: var(--chat-bg);
 }
 
 .chat-header {
@@ -253,7 +256,7 @@ body {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  background-color: var(--light-gray);
+  background-color: var(--chat-bg);
   padding-bottom: 16px;
 }
 
@@ -285,15 +288,16 @@ body {
   padding: 16px 8px;
   position: relative;
   width: 100%;
+  background-color: transparent;
 }
 
 .message.user {
-  background-color: var(--message-user-bg);
+  background-color: transparent;
   flex-direction: row-reverse;
 }
 
 .message.assistant {
-  background-color: var(--message-assistant-bg);
+  background-color: transparent;
 }
 
 .message-avatar {
@@ -339,27 +343,22 @@ body {
 }
 
 .message-bubble {
-  max-width: 90%;
-  background-color: transparent;
+  max-width: var(--message-max-width);
   border-radius: 12px;
-  padding: 8px 12px;
+  padding: 12px 16px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
 .message.user .message-bubble {
   background-color: var(--message-user-bg);
+  margin-right: 20px;
+  border-top-right-radius: 2px;
 }
 
 .message.assistant .message-bubble {
   background-color: var(--message-assistant-bg);
-}
-
-.dark-theme .message.user .message-bubble {
-  background-color: #3B4858;
-}
-
-.dark-theme .message.assistant .message-bubble {
-  background-color: #2D3748;
+  margin-left: 20px;
+  border-top-left-radius: 2px;
 }
 
 .message-content {

@@ -38,6 +38,7 @@ function App() {
             return getUserStatus(telegramId);
           })
           .then(statusData => {
+            console.log("Получен статус:", statusData);
             setStatus({
               daysLeft: statusData.days_left || 0,
               tokensLeft: statusData.tokens_left || 0,

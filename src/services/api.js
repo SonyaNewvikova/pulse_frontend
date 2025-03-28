@@ -1,8 +1,24 @@
 import axios from 'axios';
 
-// Base URL for API requests - change in production
-// Используем переменную окружения или локальный адрес по умолчанию
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+// API base URL (from environment variable or default)
+// Обновлено для автоматического определения localhost или удаленного сервера
+const getBaseUrl = () => {
+  const envUrl = process.env.REACT_APP_API_URL;
+  
+  // Если URL задан в переменных окружения - используем его
+  if (envUrl) return envUrl;
+  
+  // Проверяем, запущено ли приложение локально
+  const isLocalhost = 
+    window.location.hostname === 'localhost' || 
+    window.location.hostname === '127.0.0.1';
+  
+  // Для локальной разработки используем localhost, для production - ngrok URL
+  return isLocalhost ? 'http://localhost:8000' : 'https://c590-89-46-235-158.ngrok-free.app';
+};
+
+const API_URL = getBaseUrl();
+console.log("Using API URL:", API_URL);
 
 // Настраиваем axios для работы с CORS
 axios.defaults.withCredentials = true;
