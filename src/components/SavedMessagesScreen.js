@@ -25,18 +25,34 @@ const SavedMessagesScreen = ({ user }) => {
 
   useEffect(() => {
     const fetchSavedMessages = async () => {
+      if (!user || !user.telegram_id) {
+        setError('Пользователь не авторизован');
+        setLoading(false);
+        return;
+      }
+      
       try {
+        console.log("Запрос сохраненных сообщений для ID:", user.telegram_id);
         const data = await getSavedMessages(user.telegram_id);
-        setSavedMessages(data);
+        console.log("Получены сохраненные сообщения:", data);
+        
+        // Проверяем, что data - это массив
+        if (Array.isArray(data)) {
+          setSavedMessages(data);
+        } else {
+          setSavedMessages([]);
+          setError('Нет сохраненных сообщений');
+        }
         setLoading(false);
       } catch (err) {
+        console.error("Ошибка при загрузке сохраненных сообщений:", err);
         setError('Не удалось загрузить сохранённые ответы');
         setLoading(false);
       }
     };
 
     fetchSavedMessages();
-  }, [user.telegram_id]);
+  }, [user]);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);

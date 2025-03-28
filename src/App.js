@@ -40,14 +40,22 @@ function App() {
           .then(statusData => {
             console.log("Получен статус:", statusData);
             
-            // Проверка, есть ли дни доступа - если есть, значит доступ активен
-            const isAccessActive = (statusData.days_left && statusData.days_left > 0);
+            // Принудительно устанавливаем статус активным, если есть дни доступа
+            const hasAccessDays = statusData.days_left > 0;
+            const isActive = statusData.is_active === true;
+            const accessStatus = hasAccessDays && isActive ? 'active' : statusData.access_status || 'denied';
+            
+            // Сохраняем статус в localStorage для надежности
+            if (hasAccessDays) {
+              localStorage.setItem('userAccessStatus', 'active');
+              localStorage.setItem('userDaysLeft', statusData.days_left.toString());
+            }
             
             setStatus({
               daysLeft: statusData.days_left || 0,
               tokensLeft: statusData.tokens_left || 0,
               limitReached: statusData.limit_reached || false,
-              accessStatus: isAccessActive ? 'active' : (statusData.access_status || 'denied')
+              accessStatus: accessStatus
             });
             setLoading(false);
           })
