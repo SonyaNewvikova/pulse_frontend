@@ -10,7 +10,9 @@ axios.defaults.withCredentials = true;
 // Register or authenticate user
 export const registerUser = async (telegramId, username) => {
   try {
-    const response = await axios.post(`${API_URL}/api/register/`, {
+    // Убираем возможность двойного слеша, обеспечивая правильный формат URL
+    const url = `${API_URL.replace(/\/+$/, '')}/api/register/`;
+    const response = await axios.post(url, {
       telegram_id: telegramId,
       username: username
     });
@@ -24,7 +26,9 @@ export const registerUser = async (telegramId, username) => {
 // Send a chat message to AI
 export const sendChatMessage = async (telegramId, message) => {
   try {
-    const response = await axios.post(`${API_URL}/api/chat/`, {
+    // Убираем возможность двойного слеша, обеспечивая правильный формат URL
+    const url = `${API_URL.replace(/\/+$/, '')}/api/chat/`;
+    const response = await axios.post(url, {
       telegram_id: telegramId,
       message: message
     });
@@ -41,7 +45,9 @@ export const sendChatMessage = async (telegramId, message) => {
 // Save a message to diary
 export const saveMessage = async (messageId) => {
   try {
-    const response = await axios.post(`${API_URL}/api/save/`, {
+    // Убираем возможность двойного слеша, обеспечивая правильный формат URL
+    const url = `${API_URL.replace(/\/+$/, '')}/api/save/`;
+    const response = await axios.post(url, {
       message_id: messageId
     });
     return response.data;
@@ -54,7 +60,9 @@ export const saveMessage = async (messageId) => {
 // Get saved messages
 export const getSavedMessages = async (telegramId) => {
   try {
-    const response = await axios.get(`${API_URL}/api/saved/`, {
+    // Убираем возможность двойного слеша, обеспечивая правильный формат URL
+    const url = `${API_URL.replace(/\/+$/, '')}/api/saved/`;
+    const response = await axios.get(url, {
       params: { telegram_id: telegramId }
     });
     return response.data;
@@ -67,7 +75,9 @@ export const getSavedMessages = async (telegramId) => {
 // Get user status (access days and token limits)
 export const getUserStatus = async (telegramId) => {
   try {
-    const response = await axios.get(`${API_URL}/api/status/`, {
+    // Убираем возможность двойного слеша, обеспечивая правильный формат URL
+    const url = `${API_URL.replace(/\/+$/, '')}/api/status/`;
+    const response = await axios.get(url, {
       params: { telegram_id: telegramId }
     });
     return response.data;
@@ -80,6 +90,8 @@ export const getUserStatus = async (telegramId) => {
 // Submit feedback
 export const submitFeedback = async (telegramId, message, voiceFile = null) => {
   try {
+    // Убираем возможность двойного слеша, обеспечивая правильный формат URL
+    const url = `${API_URL.replace(/\/+$/, '')}/api/feedback/`;
     const formData = new FormData();
     formData.append('telegram_id', telegramId);
     
@@ -91,7 +103,7 @@ export const submitFeedback = async (telegramId, message, voiceFile = null) => {
       formData.append('voice_file', voiceFile);
     }
     
-    const response = await axios.post(`${API_URL}/api/feedback/`, formData, {
+    const response = await axios.post(url, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
