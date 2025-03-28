@@ -39,11 +39,15 @@ function App() {
           })
           .then(statusData => {
             console.log("Получен статус:", statusData);
+            
+            // Проверка, есть ли дни доступа - если есть, значит доступ активен
+            const isAccessActive = (statusData.days_left && statusData.days_left > 0);
+            
             setStatus({
               daysLeft: statusData.days_left || 0,
               tokensLeft: statusData.tokens_left || 0,
               limitReached: statusData.limit_reached || false,
-              accessStatus: statusData.access_status || 'denied'
+              accessStatus: isAccessActive ? 'active' : (statusData.access_status || 'denied')
             });
             setLoading(false);
           })

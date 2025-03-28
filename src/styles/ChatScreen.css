@@ -351,13 +351,13 @@ body {
 
 .message.user .message-bubble {
   background-color: var(--message-user-bg);
-  margin-right: 20px;
+  margin-right: 8px;
   border-top-right-radius: 2px;
 }
 
 .message.assistant .message-bubble {
   background-color: var(--message-assistant-bg);
-  margin-left: 20px;
+  margin-left: 8px;
   border-top-left-radius: 2px;
 }
 
