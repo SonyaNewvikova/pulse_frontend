@@ -34,6 +34,8 @@ function App() {
         registerUser(telegramId, username)
           .then(response => {
             setUser(response.user);
+            // Сохраняем идентификатор пользователя в localStorage для уникальных ключей
+            localStorage.setItem('currentTelegramId', telegramId);
             // After registration, get user status
             return getUserStatus(telegramId);
           })

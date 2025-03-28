@@ -2,34 +2,37 @@ import React, { useState, useEffect } from 'react';
 import '../styles/StatusBar.css';
 
 const StatusBar = ({ daysLeft, tokensLeft, limitReached, accessStatus }) => {
-  // Принудительно установим статус активным для отладки
+  // Состояние для хранения локальных данных
   const [localStatus, setLocalStatus] = useState({
-    daysLeft: 426, // Жестко закодированное значение для отладки
-    accessStatus: 'active' // Жестко закодированное значение для отладки
+    daysLeft: daysLeft,
+    accessStatus: accessStatus
   });
   
-  // Выводим отладочную информацию в консоль
+  // При изменении props или при монтировании компонента
   useEffect(() => {
     console.log("StatusBar получил props:", { daysLeft, tokensLeft, limitReached, accessStatus });
-    console.log("Текущий localStatus:", localStatus);
     
-    // Проверяем localStorage
-    const savedStatus = localStorage.getItem('userAccessStatus');
-    const savedDays = localStorage.getItem('userDaysLeft');
-    console.log("Данные из localStorage:", { savedStatus, savedDays });
-    
-    // Принудительно устанавливаем статус активным
-    localStorage.setItem('userAccessStatus', 'active');
-    localStorage.setItem('userDaysLeft', '426');
-    
-    setLocalStatus({
-      daysLeft: 426,
-      accessStatus: 'active'
-    });
+    // Если данные пришли с API, обновляем состояние
+    if (daysLeft > 0 && accessStatus === 'active') {
+      setLocalStatus({
+        daysLeft: daysLeft,
+        accessStatus: 'active'
+      });
+      
+      // Сохраняем данные в localStorage только для текущего пользователя
+      const userKey = `user_${localStorage.getItem('currentTelegramId')}`;
+      localStorage.setItem(`${userKey}_accessStatus`, 'active');
+      localStorage.setItem(`${userKey}_daysLeft`, daysLeft.toString());
+    } else {
+      setLocalStatus({
+        daysLeft: daysLeft,
+        accessStatus: accessStatus
+      });
+    }
   }, [daysLeft, accessStatus, tokensLeft, limitReached]);
   
-  // Всегда показываем активный доступ для отладки
-  const hasAccess = true;
+  // Определяем, есть ли доступ на основе реальных данных
+  const hasAccess = localStatus.daysLeft > 0 && localStatus.accessStatus === 'active';
   
   return (
     <div className="status-bar">
