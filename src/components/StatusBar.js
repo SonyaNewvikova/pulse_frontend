@@ -1,15 +1,20 @@
 import React from 'react';
 import '../styles/StatusBar.css';
 
-const StatusBar = ({ daysLeft, tokensLeft, limitReached }) => {
+const StatusBar = ({ daysLeft, tokensLeft, limitReached, accessStatus }) => {
+  // Определяем статус доступа на основе полученных данных
+  const hasAccess = accessStatus === 'active';
+  
   return (
     <div className="status-bar">
-      <div className={`status-item days ${daysLeft > 0 ? 'active' : 'inactive'}`}>
+      <div className={`status-item days ${hasAccess ? 'active' : 'inactive'}`}>
         <span className="status-label">Доступ:</span>
-        {daysLeft > 0 ? (
+        {hasAccess ? (
           <span className="status-value">{daysLeft} дней</span>
         ) : (
-          <span className="status-value">Закончился</span>
+          <span className="status-value">
+            {accessStatus === 'expired' ? 'Закончился' : 'Не активирован'}
+          </span>
         )}
       </div>
       

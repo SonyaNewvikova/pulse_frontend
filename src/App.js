@@ -13,7 +13,8 @@ function App() {
   const [status, setStatus] = useState({
     daysLeft: 0,
     tokensLeft: 0,
-    limitReached: false
+    limitReached: false,
+    accessStatus: 'denied'
   });
 
   useEffect(() => {
@@ -40,7 +41,8 @@ function App() {
             setStatus({
               daysLeft: statusData.days_left || 0,
               tokensLeft: statusData.tokens_left || 0,
-              limitReached: statusData.limit_reached || false
+              limitReached: statusData.limit_reached || false,
+              accessStatus: statusData.access_status || 'denied'
             });
             setLoading(false);
           })
@@ -84,6 +86,7 @@ function App() {
           daysLeft={status.daysLeft} 
           tokensLeft={status.tokensLeft} 
           limitReached={status.limitReached} 
+          accessStatus={status.accessStatus}
         />
         <Routes>
           <Route path="/" element={<ChatScreen user={user} />} />
