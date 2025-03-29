@@ -45,6 +45,7 @@
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  color: var(--text-color);
 }
 
 .saved-message-date {
@@ -55,6 +56,7 @@
 
 .saved-message-content {
   line-height: 1.5;
+  color: var(--text-color);
 }
 
 .no-saved-messages {
@@ -95,6 +97,15 @@ button {
 
 button:hover {
   background-color: var(--button-hover-color);
+}
+
+.dark-theme .saved-message-card {
+  background-color: #2d333b;
+  border: 1px solid #444c56;
+}
+
+.dark-theme .saved-messages-container {
+  background-color: #22272e;
 }
 
 @media (max-width: 768px) {

@@ -88,18 +88,46 @@ export const getSavedMessages = async (telegramId) => {
   }
 };
 
-// Get user status (access days and token limits)
+/**
+ * Get user status
+ * @param {string} telegramId 
+ * @returns {Promise<Object>}
+ */
 export const getUserStatus = async (telegramId) => {
   try {
-    // Убираем возможность двойного слеша, обеспечивая правильный формат URL
-    const url = `${API_URL.replace(/\/+$/, '')}/api/status/`;
-    const response = await axios.get(url, {
-      params: { telegram_id: telegramId }
-    });
+    console.log("Запрос статуса для ID:", telegramId);
+    const response = await axios.get(`${API_URL}/api/status/?telegram_id=${telegramId}`);
+    console.log("Ответ API на getUserStatus:", response.data);
     return response.data;
   } catch (error) {
     console.error('Error getting user status:', error);
-    throw error;
+    return {
+      is_active: false,
+      days_left: 0,
+      tokens_left: 0,
+      limit_reached: true,
+      access_status: 'denied'
+    };
+  }
+};
+
+/**
+ * Get token limit
+ * @param {string} telegramId 
+ * @returns {Promise<Object>}
+ */
+export const getTokenLimit = async (telegramId) => {
+  try {
+    console.log("Запрос лимита токенов для ID:", telegramId);
+    const response = await axios.get(`${API_URL}/api/limit/?telegram_id=${telegramId}`);
+    console.log("Ответ API на getTokenLimit:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error getting token limit:', error);
+    return {
+      limit_reached: true,
+      tokens_left: 0
+    };
   }
 };
 
