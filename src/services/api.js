@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { logService, logApiCall } from './logService';
 
 // API base URL (from environment variable or default)
 // Обновлено для автоматического определения localhost или удаленного сервера
-const getBaseUrl = () => {
+export const getBaseUrl = () => {
   const envUrl = process.env.REACT_APP_API_URL;
   
   // Если URL задан в переменных окружения - используем его
@@ -18,7 +19,7 @@ const getBaseUrl = () => {
 };
 
 const API_URL = getBaseUrl();
-console.log("Using API URL:", API_URL);
+logService.info("Using API URL:", API_URL);
 
 // Настраиваем axios для работы с CORS
 axios.defaults.withCredentials = true;
@@ -26,15 +27,21 @@ axios.defaults.withCredentials = true;
 // Register or authenticate user
 export const registerUser = async (telegramId, username) => {
   try {
+    // Устанавливаем Telegram ID для сервиса логов
+    logService.setTelegramId(telegramId);
+    
     // Убираем возможность двойного слеша, обеспечивая правильный формат URL
     const url = `${API_URL.replace(/\/+$/, '')}/api/register/`;
-    const response = await axios.post(url, {
-      telegram_id: telegramId,
-      username: username
-    });
-    return response.data;
+    
+    return await logApiCall(url, 'post', async () => {
+      const response = await axios.post(url, {
+        telegram_id: telegramId,
+        username: username
+      });
+      return response.data;
+    }, { telegramId, username });
   } catch (error) {
-    console.error('Error registering user:', error);
+    logService.error('Error registering user:', error);
     throw error;
   }
 };
@@ -44,13 +51,16 @@ export const sendChatMessage = async (telegramId, message) => {
   try {
     // Убираем возможность двойного слеша, обеспечивая правильный формат URL
     const url = `${API_URL.replace(/\/+$/, '')}/api/chat/`;
-    const response = await axios.post(url, {
-      telegram_id: telegramId,
-      message: message
-    });
-    return response.data;
+    
+    return await logApiCall(url, 'post', async () => {
+      const response = await axios.post(url, {
+        telegram_id: telegramId,
+        message: message
+      });
+      return response.data;
+    }, { telegramId, messageLength: message.length });
   } catch (error) {
-    console.error('Error sending message:', error);
+    logService.error('Error sending message:', error);
     if (error.response) {
       return error.response.data;
     }
@@ -63,12 +73,15 @@ export const saveMessage = async (messageId) => {
   try {
     // Убираем возможность двойного слеша, обеспечивая правильный формат URL
     const url = `${API_URL.replace(/\/+$/, '')}/api/save/`;
-    const response = await axios.post(url, {
-      message_id: messageId
-    });
-    return response.data;
+    
+    return await logApiCall(url, 'post', async () => {
+      const response = await axios.post(url, {
+        message_id: messageId
+      });
+      return response.data;
+    }, { messageId });
   } catch (error) {
-    console.error('Error saving message:', error);
+    logService.error('Error saving message:', error);
     throw error;
   }
 };
@@ -78,12 +91,15 @@ export const getSavedMessages = async (telegramId) => {
   try {
     // Убираем возможность двойного слеша, обеспечивая правильный формат URL
     const url = `${API_URL.replace(/\/+$/, '')}/api/saved/`;
-    const response = await axios.get(url, {
-      params: { telegram_id: telegramId }
-    });
-    return response.data;
+    
+    return await logApiCall(url, 'get', async () => {
+      const response = await axios.get(url, {
+        params: { telegram_id: telegramId }
+      });
+      return response.data;
+    }, { telegramId });
   } catch (error) {
-    console.error('Error getting saved messages:', error);
+    logService.error('Error getting saved messages:', error);
     throw error;
   }
 };
@@ -95,19 +111,25 @@ export const getSavedMessages = async (telegramId) => {
  */
 export const getUserStatus = async (telegramId) => {
   try {
-    console.log("Запрос статуса для ID:", telegramId);
-    const response = await axios.get(`${API_URL}/api/status/?telegram_id=${telegramId}`);
-    console.log("Ответ API на getUserStatus:", response.data);
-    return response.data;
+    logService.info("Запрос статуса для ID:", telegramId);
+    const url = `${API_URL}/api/status/`;
+    
+    return await logApiCall(url, 'get', async () => {
+      const response = await axios.get(`${url}?telegram_id=${telegramId}`);
+      logService.info("Ответ API на getUserStatus:", response.data);
+      return response.data;
+    }, { telegramId });
   } catch (error) {
-    console.error('Error getting user status:', error);
-    return {
+    logService.error('Error getting user status:', error);
+    const defaultResponse = {
       is_active: false,
       days_left: 0,
       tokens_left: 0,
       limit_reached: true,
       access_status: 'denied'
     };
+    logService.warn('Возвращаем значения по умолчанию для статуса:', defaultResponse);
+    return defaultResponse;
   }
 };
 
@@ -118,16 +140,22 @@ export const getUserStatus = async (telegramId) => {
  */
 export const getTokenLimit = async (telegramId) => {
   try {
-    console.log("Запрос лимита токенов для ID:", telegramId);
-    const response = await axios.get(`${API_URL}/api/limit/?telegram_id=${telegramId}`);
-    console.log("Ответ API на getTokenLimit:", response.data);
-    return response.data;
+    logService.info("Запрос лимита токенов для ID:", telegramId);
+    const url = `${API_URL}/api/limit/`;
+    
+    return await logApiCall(url, 'get', async () => {
+      const response = await axios.get(`${url}?telegram_id=${telegramId}`);
+      logService.info("Ответ API на getTokenLimit:", response.data);
+      return response.data;
+    }, { telegramId });
   } catch (error) {
-    console.error('Error getting token limit:', error);
-    return {
+    logService.error('Error getting token limit:', error);
+    const defaultResponse = {
       limit_reached: true,
       tokens_left: 0
     };
+    logService.warn('Возвращаем значения по умолчанию для лимита токенов:', defaultResponse);
+    return defaultResponse;
   }
 };
 
@@ -147,15 +175,16 @@ export const submitFeedback = async (telegramId, message, voiceFile = null) => {
       formData.append('voice_file', voiceFile);
     }
     
-    const response = await axios.post(url, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-    
-    return response.data;
+    return await logApiCall(url, 'post', async () => {
+      const response = await axios.post(url, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      return response.data;
+    }, { telegramId, hasMessage: !!message, hasVoice: !!voiceFile });
   } catch (error) {
-    console.error('Error submitting feedback:', error);
+    logService.error('Error submitting feedback:', error);
     throw error;
   }
 };
